@@ -45,13 +45,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Build APK via Android build-tools
+      - name: Configure Android SDK build-tools
         run: |
-          # Use build.sh with installed Android SDK
-          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          LATEST_BUILD_TOOLS=$(ls -1d $ANDROID_SDK_ROOT/build-tools/* | sort -V | tail -n 1)
+          echo "Using Android build-tools: $LATEST_BUILD_TOOLS"
+          echo "$LATEST_BUILD_TOOLS" >> $GITHUB_PATH
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+
+      - name: Build APK via build script
+        run: |
           chmod +x build.sh
           bash build.sh
 
