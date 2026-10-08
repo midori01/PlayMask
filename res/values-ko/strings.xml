@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PlayMask</string>
+    <string name="xposed_description">Google Play 스토어 계정 전환 메뉴에서 이메일 사용자 이름을 숨깁니다.</string>
+</resources>

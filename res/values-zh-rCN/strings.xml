@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PlayMask</string>
+    <string name="xposed_description">在 Google Play 商店账号切换菜单中马赛克隐藏邮箱用户名。</string>
+</resources>

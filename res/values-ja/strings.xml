@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PlayMask</string>
+    <string name="xposed_description">Google Play ストアのアカウント切り替えでメールのユーザー名を非表示にします。</string>
+</resources>

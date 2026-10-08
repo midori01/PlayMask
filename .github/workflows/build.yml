@@ -1,0 +1,76 @@
+name: Build and Release PlayMask
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run logic & localization tests
+        run: |
+          python3 -c "
+          from tests.test_playmask import test_email_masking, test_localization
+          test_email_masking()
+          test_localization()
+          print('[✓] Pre-build logic & 6-language tests passed.')
+          "
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK via Android build-tools
+        run: |
+          # Use build.sh with installed Android SDK
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          chmod +x build.sh
+          bash build.sh
+
+      - name: Run Full Artifact Verification Suite
+        run: |
+          python3 tests/test_playmask.py
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlayMask-v1.2.2
+          path: PlayMask.apk
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: PlayMask ${{ github.ref_name }}
+          files: PlayMask.apk
+          generate_release_notes: true
+          draft: false
+          prerelease: false
